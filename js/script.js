@@ -271,6 +271,7 @@ $( document ).ready(function() {
         $(this).addClass('active')
     })
 
+    // Слайдер на странице акции
     $('.promotion-page .team__wrapper').slick({
         arrows: false,
         dots: true,
@@ -278,6 +279,16 @@ $( document ).ready(function() {
         slidesToShow: 1,
         slidesToScroll: 1,
         touchThreshold: 100,
+    })
+
+    // Открытие/закрытие вкладок на странице с ценами
+    $('.price__toggle').on('click', function () {
+        $(this).parent().toggleClass('active')
+    })
+
+    // Открытие/закрытие подвкладок в расписании
+    $('.timetable__person-toggle').on('click', function () {
+        $(this).parent().toggleClass('active')
     })
 })
 
