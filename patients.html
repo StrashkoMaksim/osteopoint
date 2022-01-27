@@ -10,6 +10,7 @@
     <!--Стили-->
     <link rel="stylesheet" type="text/css" href="css/slick.css"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css"/>
+    <link rel="stylesheet" href="css/jquery-ui.min.css">
     <link rel="stylesheet" href="css/main.css">
 
     <!--Скрипты-->
@@ -19,6 +20,10 @@
     <script src="js/slick.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js" defer></script>
     <script src="js/smooth-scrollbar.js" defer></script>
+    <script src="js/imask.js" defer></script>
+    <script src="js/globalize.js" defer></script>
+    <script src="js/jquery-ui.min.js" defer></script>
+    <script src="js/globalize.culture.ru-RU.js" defer></script>
     <script src="js/script.js" defer></script>
 </head>
 <body>
@@ -114,7 +119,7 @@
         </div>
         <div class="header__bottom">
             <a href="#" class="header__logo">
-                <img src="img/logo.png" alt="Логотип">
+                <img src="img/logo.svg" alt="Логотип">
             </a>
             <div class="header__right">
                 <button class="blue-btn header__blue-btn">Записаться на прием</button>
@@ -141,7 +146,7 @@
     <div class="container nav__container">
         <div class="nav__group">
             <div class="nav__header">
-                <button class="nav__link">О нас</button>
+                <a href="#" class="nav__link">О нас</a>
                 <button class="nav__open"></button>
             </div>
             <div class="nav__dropdown" id="nav__about">
@@ -176,7 +181,7 @@
         <div class="nav__divider"></div>
         <div class="nav__group">
             <div class="nav__header">
-                <button class="nav__link">Услуги и цены</button>
+                <a href="#" class="nav__link">Услуги и цены</a>
                 <button class="nav__open"></button>
             </div>
             <div class="nav__dropdown">
@@ -382,7 +387,7 @@
         <div class="nav__divider"></div>
         <div class="nav__group">
             <div class="nav__header">
-                <button class="nav__link">Пациентам</button>
+                <a href="#" class="nav__link">Пациентам</a>
                 <button class="nav__open"></button>
             </div>
             <div class="nav__dropdown" id="nav__patients">
@@ -448,7 +453,7 @@
     <section class="section breadcrumbs">
         <div class="container breadcrumbs__container">
             <div class="breadcrumbs__wrapper">
-                <a href="index.html">Главная</a>
+                <a href="mainpage.html">Главная</a>
                 <span>Пациентам</span>
             </div>
         </div>

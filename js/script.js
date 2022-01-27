@@ -18,9 +18,12 @@ $( document ).ready(function() {
     })
 
     // Открытие поиска на маленьких экранах
-    $('.header__search--submit').on('click', function () {
-        if ($(this).width() <= 1050) {
+    $('.header__search--submit').on('click', function (e) {
+        if ($(window).width() <= 1050 && !$(this).next().hasClass('active')) {
+            e.preventDefault()
             $(this).next().addClass('active')
+            $(this).next().find('input').focus()
+            $(window).scrollTop(0)
             $('.mount').addClass('active')
             $('.header__top').addClass('show')
         }
@@ -68,12 +71,24 @@ $( document ).ready(function() {
     })
 
     // Открытие выпадающего меню в навигации
-    $('button.nav__link').on('click', function () {
+    let isNavClosing = false
+
+    $('.nav__link').on('mouseover', function () {
         if($(window).width() > 1200) {
             $('.nav__dropdown').removeClass('active')
-            $('.mount').addClass('active')
             $(this).parent().next().addClass('active')
-            $('.nav__container').addClass('show')
+            isNavClosing = false
+        }
+    })
+
+    $('.nav__link').on('mouseleave', function () {
+        if (!isNavClosing) {
+            setTimeout(() => {
+                if (isNavClosing) {
+                    $(this).parent().next().removeClass('active')
+                }
+            }, 1000)
+            isNavClosing = true
         }
     })
 
@@ -140,10 +155,10 @@ $( document ).ready(function() {
         hideScrollbar: false,
         on: {
             ready: () => {
-                $('.header, .nav, .main, .footer').addClass('blur')
+                $('.header, .nav, .main, .footer, .side-btns, .sticky-btns').addClass('blur')
             },
             destroy: () => {
-                $('.header, .nav, .main, .footer').removeClass('blur')
+                $('.header, .nav, .main, .footer, .side-btns, .sticky-btns').removeClass('blur')
             }
         },
     });
@@ -176,56 +191,60 @@ $( document ).ready(function() {
     })
 
     // Слайдер с сертификатами
-    $('.certificates__slider').slick({
-        arrows: false,
-        dots: true,
-        slidesToScroll: 4,
-        slidesToShow: 4,
-        responsive: [
-            {
-                breakpoint: 960,
-                settings: {
-                    slidesToScroll: 3,
-                    slidesToShow: 3,
+    if ($('.licenses-page').length === 0) {
+        $('.certificates__slider').slick({
+            arrows: false,
+            dots: true,
+            slidesToScroll: 4,
+            slidesToShow: 4,
+            responsive: [
+                {
+                    breakpoint: 960,
+                    settings: {
+                        slidesToScroll: 3,
+                        slidesToShow: 3,
+                    }
+                },
+                {
+                    breakpoint: 640,
+                    settings: {
+                        slidesToScroll: 1,
+                        slidesToShow: 1,
+                        variableWidth: true,
+                    }
                 }
-            },
-            {
-                breakpoint: 640,
-                settings: {
-                    slidesToScroll: 1,
-                    slidesToShow: 1,
-                    variableWidth: true,
-                }
-            }
-        ]
-    })
+            ]
+        })
+    }
 
     // Слайдер с видео
-    $('.video__slider').slick({
-        arrows: false,
-        dots: true,
-        slidesToScroll: 1,
-        slidesToShow: 2,
-        responsive: [
-            {
-                breakpoint: 960,
-                settings: {
-                    slidesToShow: 1,
-                    variableWidth: true
+    if ($('.contacts-page').length === 0) {
+        $('.video__slider').slick({
+            arrows: false,
+            dots: true,
+            slidesToScroll: 1,
+            slidesToShow: 2,
+            responsive: [
+                {
+                    breakpoint: 960,
+                    settings: {
+                        slidesToShow: 1,
+                        variableWidth: true
+                    }
                 }
-            }
-        ]
-    })
+            ]
+        })
+    }
 
     Fancybox.bind("[data-fancybox='video']", {
         arrows: true,
         hideScrollbar: false,
         on: {
             ready: () => {
-                $('.header, .nav, .main, .footer').addClass('blur')
+                $('.header, .nav, .main, .footer, .side-btns, .sticky-btns').addClass('blur')
             },
             destroy: () => {
-                $('.header, .nav, .main, .footer').removeClass('blur')
+                $('.header, .nav, .main, .footer, .side-btns, .sticky-btns').removeClass('blur')
             }
         },
     });
@@ -272,14 +291,16 @@ $( document ).ready(function() {
     })
 
     // Слайдер на странице акции
-    $('.promotion-page .team__wrapper').slick({
-        arrows: false,
-        dots: true,
-        variableWidth: true,
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        touchThreshold: 100,
-    })
+    if ($('.promotion-page, .service-page').length > 0) {
+        $('.team__wrapper').slick({
+            arrows: false,
+            dots: true,
+            variableWidth: true,
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            touchThreshold: 100,
+        })
+    }
 
     // Открытие/закрытие вкладок на странице с ценами
     $('.price__toggle').on('click', function () {
@@ -290,7 +311,193 @@ $( document ).ready(function() {
     $('.timetable__person-toggle').on('click', function () {
         $(this).parent().toggleClass('active')
     })
+
+    // Разворачивание/сворачивание отзывов на странице с отзывами
+    $('.reviews-page__toggle').on('click', function () {
+        $(this).parent().toggleClass('active')
+    })
+
+    // Слайдеры на странице услуги
+    $('.service__main-slider').slick({
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        arrows: true,
+        fade: true,
+        asNavFor: '.service__nav-slider'
+    })
+
+    $('.service__nav-slider').slick({
+        arrows: false,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        asNavFor: '.service__main-slider',
+        variableWidth: true,
+        focusOnSelect: true
+    })
+
+    // Загрузка файла в форме
+    $('.form__file input').on('change', function (e) {
+        const fileSize = $(this)[0].files[0].size
+
+        if (fileSize > 5000000) {
+            e.preventDefault()
+            alert('Слишком большой размер файла')
+            return
+        }
+
+        $(this).parent().prev().addClass('active')
+
+        $(this).parent().prev().text($(this)[0].files[0].name + ' ('
+            + (fileSize / 1000000).toFixed(2) + 'Мб)')
+    })
+
+    // Маска телефона в форме
+    $('input[name=phone]').each(function () {
+        IMask($(this)[0], {mask: '+{7} (000) 000-00-00'})
+    })
+
+    // Открытие формы для записи к конкретному врачу
+    $('.timetable__btn').on('click', function () {
+        $('.header, .nav, .main, .footer, .sticky-btns, .side-btns').addClass('blur')
+        $('.doctor-modal').addClass('active')
+    })
+
+    // Выбор свободной даты в модалке с записью
+    const natDays = [
+        [1, 26, 'free'], [1, 27, 'busy'], [1, 23, 'busy']
+    ];
+
+    function nationalDays(date) {
+        for (i = 0; i < natDays.length; i++) {
+            if (date.getMonth() == natDays[i][0] - 1
+                && date.getDate() == natDays[i][1] && natDays[i][2] === 'free') {
+                return [true, 'free-day'];
+            } else if (date.getMonth() == natDays[i][0] - 1
+                && date.getDate() == natDays[i][1] && natDays[i][2] === 'busy') {
+                return [false, 'busy-day'];
+            }
+        }
+        return [false, ''];
+    }
+
+    $( ".form__inline-datepicker" ).datepicker({
+        dateFormat: 'dd.mm.yy',
+        firstDay: 1,
+        monthNames : ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
+        dayNamesMin : ['вс','пн','вт','ср','чт','пт','сб'],
+        beforeShowDay: nationalDays
+    })
+
+    // Выбор даты в форме
+    $( ".form__datepicker input" ).datepicker({
+        dateFormat: 'dd.mm.yy',
+        firstDay: 1,
+        monthNames : ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
+        dayNamesMin : ['вс','пн','вт','ср','чт','пт','сб'],
+    })
+
+    // Выбор времени в форме записи
+    $.widget( "ui.timespinner", $.ui.spinner, {
+        options: {
+            // seconds
+            step: 30 * 60 * 1000,
+            // hours
+            page: 60
+        },
+
+        _parse: function( value ) {
+            if ( typeof value === "string" ) {
+                // already a timestamp
+                if ( Number( value ) == value ) {
+                    return Number( value );
+                }
+                return +Globalize.parseDate( value );
+            }
+            return value;
+        },
+
+        _format: function( value ) {
+            return Globalize.format( new Date(value), "t" );
+        }
+    });
+
+    Globalize.culture("ru-RU");
+    $(".form__time-spinner").timespinner();
+
+    // Выпадающее меню в форме
+    $( ".form__select" ).selectmenu();
+
+    // Открытие модалки "Оставить отзыв"
+    $('.aside__add-review').on('click', function () {
+        $('.header, .nav, .main, .footer, .sticky-btns, .side-btns').addClass('blur')
+        $('.add-review-modal').addClass('active')
+    })
+
+    // Показ баннера в карточке услуги
+    const serviceBannerEl = $('.service__banner')
+    const servicePriceEl = $('.service__price')
+    const serviceSectionEl = $('.service')
+
+    // Прилипание баннера к экрану на странице услуги
+    $(window).on('scroll', function () {
+        if ($(this).width() > 1200 && serviceBannerEl.hasClass('active')) {
+            const bannerTop = Math.floor(serviceBannerEl.offset().top)
+            const bannerBottom = Math.floor(serviceBannerEl.offset().top + serviceBannerEl.outerHeight())
+            const priceBottom = Math.floor(servicePriceEl.offset().top + servicePriceEl.outerHeight())
+            const sectionBottom = Math.floor(serviceSectionEl.offset().top + serviceSectionEl.outerHeight())
+            const windowBottom = Math.floor($(this).scrollTop() + $(this).height())
+
+            if (bannerBottom + 4 <= windowBottom && bannerTop >= priceBottom + 4 || serviceBannerEl.hasClass('bottom')) {
+                serviceBannerEl.addClass('fixed')
+                serviceBannerEl.css('right', ($(window).width() - 1140) / 2)
+            } else {
+                serviceBannerEl.removeClass('fixed')
+            }
+
+            if (bannerBottom >= sectionBottom - 4 && windowBottom - 4 > sectionBottom) {
+                serviceBannerEl.addClass('bottom')
+            } else {
+                serviceBannerEl.removeClass('bottom')
+            }
+        }
+    })
+
+    // Показ баннера на страницах с боковой панелью
+    const stickyBannerEl = $('.sticky-banner')
+    const asideFiltersEl = $('.aside__filters')
+    const containerEl = $('.container.with-sidebar')
+
+    if ($(window).width() > 1200 && stickyBannerEl.height()
+        < containerEl.offset().top + containerEl.outerHeight() - asideFiltersEl.offset().top
+        - asideFiltersEl.outerHeight() - 8) {
+        stickyBannerEl.addClass('active')
+    }
+
+    // Прилипание баннера к экрану на страницах с сайдбаром
+    $(window).on('scroll', function () {
+        if ($(this).width() > 1200 && stickyBannerEl.hasClass('active')) {
+            const bannerTop = Math.floor(stickyBannerEl.offset().top)
+            const bannerBottom = Math.floor(stickyBannerEl.offset().top + stickyBannerEl.outerHeight())
+            const filtersBottom = Math.floor(asideFiltersEl.offset().top + asideFiltersEl.outerHeight())
+            const containerBottom = Math.floor(containerEl.offset().top + containerEl.outerHeight())
+            const windowBottom = Math.floor($(this).scrollTop() + $(this).height())
+
+            if (bannerBottom + 4 <= windowBottom && bannerTop >= filtersBottom + 4 || stickyBannerEl.hasClass('bottom')) {
+                stickyBannerEl.addClass('fixed')
+                stickyBannerEl.css('left', ($(window).width() - 1140) / 2)
+            } else {
+                stickyBannerEl.removeClass('fixed')
+            }
+
+            if (bannerBottom >= containerBottom - 4 && windowBottom - 4 > containerBottom) {
+                stickyBannerEl.addClass('bottom')
+            } else {
+                stickyBannerEl.removeClass('bottom')
+            }
+        }
+    })
 })
+
 
 function servicesSlider () {
     if ($(window).width() > 640 && $('.services__wrapper.slick-initialized').length > 0) {
